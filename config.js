@@ -28,7 +28,7 @@ window.SITE_CONFIG = {
   // ═══════════════════════════════════════════════════════════
   images: [
     { file: "a.jpg", title: "Photo" },
-    // Si ton fichier s’appelle a.png, remplace par : { file: "a.png", title: "Photo" },
+    // Si ton fichier s’appelle a.png, remplace par : { file: "a.png", title: "Photo" },{ file: "b.png", title: "Photo" },{ file: "se.png", title: "Photo" },
     // Pour ajouter d’autres photos : { file: "nom-du-fichier.jpg", title: "Titre" },
   ],
 
