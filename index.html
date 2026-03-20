@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ma boutique</title>
+  <link rel="stylesheet" href="hero-style.css" />
+  <!-- Matomo -->
+<script>
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://wiezo.matomo.cloud/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '5']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src='https://cdn.matomo.cloud/wiezo.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code -->
+
+</head>
+<body>
+  <div class="age-badge" aria-label="Contenu réservé aux plus de 18 ans">+18</div>
+  <header class="topbar">
+    <a href="#" class="logo">
+      <span class="logo-icon">♥</span> <span id="logo-text">Ma boutique</span>
+    </a>
+    <nav class="nav">
+      <a href="#">Home</a>
+      <a href="#">Pages</a>
+      <a href="#">Shop</a>
+      <a href="#">Categories</a>
+      <a href="#">Blog</a>
+      <a href="#">Contact</a>
+    </nav>
+    <div class="topbar-right">
+    <a href="#" class="header-spotlight" aria-label="Mise en avant">
+      <img class="header-spotlight-img" src="media/images/se.jped" onerror="if (!this.dataset.fallbackApplied) { this.dataset.fallbackApplied = '1'; this.src = 'media/images/se.jpg'; }" alt="Mise en avant Jaily" />
+    </a>
+    <a href="#" id="follow-cta" class="follow-zone" target="_blank" rel="noopener" title="Follow for new stories">
+      <span class="follow-zone-line" id="follow-zone-l1">Follow me on social media</span>
+      <span class="follow-zone-sub" id="follow-zone-l2">New stories every day — there’s always more for you.</span>
+    </a>
+    </div>
+  </header>
+
+  <p class="banner-msg" id="banner-msg">Viens ici à chaque instant — il y a du nouveau pour toi et notre histoire, il y a d'autres cadeaux ♥</p>
+
+  <section class="hero" id="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content hero-content--center">
+      <p class="hero-welcome" id="hero-welcome">Bienvenue</p>
+      <h1 class="hero-title" id="hero-title">Collection</h1>
+      <p class="hero-desc" id="hero-desc">Une sélection élégante pour mettre en valeur votre style et votre confiance.</p>
+      <a href="#galerie" class="hero-btn" id="hero-btn">Voir la galerie</a>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="section" id="galerie">
+      <h2>Photos</h2>
+      <div class="grid" id="photos-grid"></div>
+    </section>
+    <section class="section" id="videos-section">
+      <h2>Vidéos</h2>
+      <div class="grid" id="videos-grid"></div>
+    </section>
+    <p class="empty" id="empty-msg" style="display:none;">Ajoutez des fichiers dans <strong>media/images/</strong> et <strong>media/videos/</strong>, puis éditez <strong>config.js</strong>.</p>
+  </div>
+
+  <div class="overlay" id="img-overlay" hidden style="display: none !important;">
+    <button class="close" id="img-close">&times;</button>
+    <img id="overlay-img" alt="" />
+  </div>
+  <div class="overlay" id="vid-overlay" hidden style="display: none !important;">
+    <button class="close" id="vid-close">&times;</button>
+    <video id="vid-player" controls></video>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+  (function() {
+    var imgOverlay = document.getElementById("img-overlay");
+    var vidOverlay = document.getElementById("vid-overlay");
+    imgOverlay.setAttribute("hidden", "");
+    vidOverlay.setAttribute("hidden", "");
+    imgOverlay.style.display = "none";
+    vidOverlay.style.display = "none";
+
+    var c = window.SITE_CONFIG || {};
+    document.getElementById("logo-text").textContent = c.logo || c.title || "Ma boutique";
+    var welcomeEl = document.getElementById("hero-welcome");
+    if (welcomeEl) welcomeEl.textContent = c.heroWelcome || "Bienvenue";
+    document.getElementById("hero-title").textContent = c.heroTitle || "Collection";
+    document.getElementById("hero-desc").textContent = c.heroDesc || "Une sélection élégante pour mettre en valeur votre style.";
+    var btn = document.getElementById("hero-btn");
+    if (c.heroBtn) { btn.textContent = c.heroBtn; if (c.heroBtnUrl) btn.href = c.heroBtnUrl; }
+    var bannerEl = document.getElementById("banner-msg");
+    if (bannerEl && c.bannerText) bannerEl.textContent = c.bannerText;
+    var followCta = document.getElementById("follow-cta");
+    var l1 = document.getElementById("follow-zone-l1");
+    var l2 = document.getElementById("follow-zone-l2");
+    if (l1 && c.followCtaTitle) l1.textContent = c.followCtaTitle;
+    if (l2 && c.followCtaSubtitle) l2.textContent = c.followCtaSubtitle;
+    if (followCta) {
+      var fu = c.followCtaUrl || c.instagram || c.tiktok || "#";
+      followCta.href = fu;
+    }
+
+    var images = c.images || [], videos = c.videos || [];
+    var photosGrid = document.getElementById("photos-grid");
+    var videosGrid = document.getElementById("videos-grid");
+    var photosSection = document.querySelector("#galerie");
+    var videosSection = document.getElementById("videos-section");
+    var emptyMsg = document.getElementById("empty-msg");
+
+    images.forEach(function(img) {
+      var path = img.url || ("media/images/" + img.file);
+      var card = document.createElement("div");
+      card.className = "card card-img";
+      card.dataset.src = path;
+      var el = document.createElement("img");
+      el.src = path;
+      el.alt = img.title || img.file || "";
+      el.loading = "lazy";
+      card.appendChild(el);
+      photosGrid.appendChild(card);
+    });
+    videos.forEach(function(vid) {
+      var path = vid.url || ("media/videos/" + vid.file);
+      var card = document.createElement("div");
+      card.className = "card card-vid";
+      card.dataset.src = path;
+      var v = document.createElement("video");
+      v.src = path;
+      v.preload = "metadata";
+      v.muted = true;
+      v.playsInline = true;
+      card.appendChild(v);
+      var play = document.createElement("span");
+      play.className = "play";
+      play.textContent = "▶";
+      card.appendChild(play);
+      videosGrid.appendChild(card);
+    });
+
+    if (images.length === 0) photosSection.style.display = "none";
+    if (videos.length === 0) videosSection.style.display = "none";
+    if (images.length || videos.length) emptyMsg.style.display = "none";
+    else emptyMsg.style.display = "block";
+
+    function showImgOverlay() {
+      vidOverlay.setAttribute("hidden", "");
+      vidOverlay.style.display = "none";
+      imgOverlay.removeAttribute("hidden");
+      imgOverlay.style.display = "flex";
+    }
+    function hideImgOverlay() {
+      imgOverlay.setAttribute("hidden", "");
+      imgOverlay.style.display = "none";
+    }
+    function showVidOverlay() {
+      imgOverlay.setAttribute("hidden", "");
+      imgOverlay.style.display = "none";
+      vidOverlay.removeAttribute("hidden");
+      vidOverlay.style.display = "flex";
+    }
+    function hideVidOverlay() {
+      var p = document.getElementById("vid-player");
+      p.pause();
+      p.removeAttribute("src");
+      p.load();
+      vidOverlay.setAttribute("hidden", "");
+      vidOverlay.style.display = "none";
+    }
+
+    photosGrid.querySelectorAll(".card-img").forEach(function(el) {
+      el.addEventListener("click", function() {
+        document.getElementById("overlay-img").src = this.dataset.src;
+        showImgOverlay();
+      });
+    });
+    videosGrid.querySelectorAll(".card-vid").forEach(function(el) {
+      el.addEventListener("click", function() {
+        var player = document.getElementById("vid-player");
+        player.src = this.dataset.src;
+        player.currentTime = 0;
+        showVidOverlay();
+        player.play();
+      });
+    });
+    document.getElementById("img-close").onclick = hideImgOverlay;
+    document.getElementById("vid-close").onclick = hideVidOverlay;
+    document.getElementById("img-overlay").onclick = function(e) { if (e.target === this) hideImgOverlay(); };
+    document.getElementById("vid-overlay").onclick = function(e) { if (e.target === this) hideVidOverlay(); };
+    document.addEventListener("keydown", function(e) {
+      if (e.key !== "Escape") return;
+      hideImgOverlay();
+      hideVidOverlay();
+    });
+  })();
+  </script>
+</body>
+</html>
